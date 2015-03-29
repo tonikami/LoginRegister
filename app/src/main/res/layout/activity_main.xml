@@ -37,6 +37,7 @@
 
 
     <Button
+        android:id="@+id/bLogout"
         android:layout_marginTop="10dp"
         android:layout_width="match_parent"
         android:text="Logout"

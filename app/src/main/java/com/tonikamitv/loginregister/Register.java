@@ -42,9 +42,8 @@ public class Register extends ActionBarActivity implements View.OnClickListener{
     }
 
     private void registerUser(User user) {
-        ServerRequests serverRequest = new ServerRequests();
+        ServerRequests serverRequest = new ServerRequests(this);
         serverRequest.storeUserDataInBackground(user, new GetUserCallback() {
-
             @Override
             public void done(User returnedUser) {
                 Intent loginIntent = new Intent(Register.this, Login.class);

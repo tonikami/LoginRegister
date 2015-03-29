@@ -11,14 +11,13 @@ public class UserLocalStore {
     public static final String SP_NAME = "userDetails";
 
     SharedPreferences userLocalDatabase;
-    SharedPreferences.Editor userLocalDatabaseEditor;
 
     public UserLocalStore(Context context) {
         userLocalDatabase = context.getSharedPreferences(SP_NAME, 0);
     }
 
     public void storeUserData(User user) {
-        userLocalDatabaseEditor = userLocalDatabase.edit();
+        SharedPreferences.Editor userLocalDatabaseEditor = userLocalDatabase.edit();
         userLocalDatabaseEditor.putString("name", user.name);
         userLocalDatabaseEditor.putString("username", user.username);
         userLocalDatabaseEditor.putString("password", user.password);
@@ -27,8 +26,14 @@ public class UserLocalStore {
     }
 
     public void setUserLoggedIn(boolean loggedIn) {
-        userLocalDatabaseEditor = userLocalDatabase.edit();
+        SharedPreferences.Editor userLocalDatabaseEditor = userLocalDatabase.edit();
         userLocalDatabaseEditor.putBoolean("loggedIn", loggedIn);
+        userLocalDatabaseEditor.commit();
+    }
+
+    public void clearUserData() {
+        SharedPreferences.Editor userLocalDatabaseEditor = userLocalDatabase.edit();
+        userLocalDatabaseEditor.clear();
         userLocalDatabaseEditor.commit();
     }
 

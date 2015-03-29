@@ -52,7 +52,7 @@ public class Login extends ActionBarActivity implements View.OnClickListener {
     }
 
     private void authenticate(User user) {
-        ServerRequests serverRequest = new ServerRequests();
+        ServerRequests serverRequest = new ServerRequests(this);
         serverRequest.fetchUserDataAsyncTask(user, new GetUserCallback() {
             @Override
             public void done(User returnedUser) {
@@ -75,6 +75,6 @@ public class Login extends ActionBarActivity implements View.OnClickListener {
     private void logUserIn(User returnedUser) {
         userLocalStore.storeUserData(returnedUser);
         userLocalStore.setUserLoggedIn(true);
-        finish();
+        startActivity(new Intent(this, MainActivity.class));
     }
 }

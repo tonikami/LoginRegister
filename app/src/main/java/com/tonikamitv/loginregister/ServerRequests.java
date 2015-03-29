@@ -1,6 +1,9 @@
 package com.tonikamitv.loginregister;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -14,22 +17,31 @@ import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 
 
 public class ServerRequests {
+    ProgressDialog progressDialog;
     public static final int CONNECTION_TIMEOUT = 1000 * 15;
     public static final String SERVER_ADDRESS = "http://tonikamitv.hostei.com/";
 
+    public ServerRequests(Context context) {
+        progressDialog = new ProgressDialog(context);
+        progressDialog.setCancelable(false);
+        progressDialog.setTitle("Processing...");
+        progressDialog.setMessage("Please wait...");
+    }
+
     public void storeUserDataInBackground(User user,
                                           GetUserCallback userCallBack) {
+        progressDialog.show();
         new StoreUserDataAsyncTask(user, userCallBack).execute();
     }
 
     public void fetchUserDataAsyncTask(User user, GetUserCallback userCallBack) {
+        progressDialog.show();
         new fetchUserDataAsyncTask(user, userCallBack).execute();
     }
 
@@ -59,7 +71,7 @@ public class ServerRequests {
 
             HttpClient client = new DefaultHttpClient(httpRequestParams);
             HttpPost post = new HttpPost(SERVER_ADDRESS
-                    + "/StoreUserData.php");
+                    + "Register.php");
 
             try {
                 post.setEntity(new UrlEncodedFormEntity(dataToSend));
@@ -83,6 +95,7 @@ public class ServerRequests {
         @Override
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
+            progressDialog.dismiss();
             userCallBack.done(null);
         }
 
@@ -111,7 +124,7 @@ public class ServerRequests {
 
             HttpClient client = new DefaultHttpClient(httpRequestParams);
             HttpPost post = new HttpPost(SERVER_ADDRESS
-                    + "/receiveUserData.php");
+                    + "FetchUserData.php");
 
             User returnedUser = null;
 
@@ -121,14 +134,11 @@ public class ServerRequests {
 
                 HttpEntity entity = httpResponse.getEntity();
                 String result = EntityUtils.toString(entity);
-
                 JSONObject jObject = new JSONObject(result);
-                JSONArray jArray = jObject.getJSONArray("user");
 
-                for (int i = 0; i < jArray.length(); i++){
-                    JSONObject oneObject = jArray.getJSONObject(i);
-
-                    String name = oneObject.getString("name");
+                if (jObject.length() != 0){
+                    Log.v("happened", "2");
+                    String name = jObject.getString("name");
                     int age = jObject.getInt("age");
 
                     returnedUser = new User(name, age, user.username,
@@ -145,6 +155,7 @@ public class ServerRequests {
         @Override
         protected void onPostExecute(User returnedUser) {
             super.onPostExecute(returnedUser);
+            progressDialog.dismiss();
             userCallBack.done(returnedUser);
         }
     }
