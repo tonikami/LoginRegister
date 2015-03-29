@@ -12,9 +12,7 @@ public class User {
         this.password = password;
     }
 
-    public User(String username, String password){
+    public User(String username, String password) {
         this("", -1, username, password);
     }
-
-
 }
